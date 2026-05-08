@@ -22,10 +22,10 @@ git clone git@github.com:aristoskapnias/LearnWordsTHA.git LearnWordsTHA
 - Create .dbt folder to hold profiles.yml
 mkdir .dbt
 
--- Copy profiles.yml from project folder to .dbt folder
+- Copy profiles.yml from project folder to .dbt folder
 cp LearnWordsTHA/profiles.yml .dbt/
 
---Create Python virtual environment with dependencies to run project
+- Create Python virtual environment with dependencies to run project
 python3 -m venv DBTenv
 source DBTenv/bin/activate
 pip install dbt-core==1.11.9 # versions found to be compatible
@@ -33,13 +33,14 @@ pip install dbt-postgres==1.10.0
 
 cd LearnWordsTHA
 
--- Run dbt seed to load .csv files as raw tables in db
+- Run dbt seed to load .csv files as raw tables in db
 dbt seed
 
-images/dbt_seed
+images/dbt_seed.png
 
--- Run tests to check data quality. Records failing will be written to a separate schema in db set via 
--- dbt_project.yml
+- Run tests to check data quality. Records failing will be written to a separate schema in db set via 
+ dbt_project.yml
+
 dbt test
 
 -- Run project to load data in final Mart table
