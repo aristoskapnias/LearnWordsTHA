@@ -1,0 +1,12 @@
+postgres_localhost:
+  outputs:
+    dev:
+      type: postgres
+      host: 127.0.0.1
+      port: 5432
+      user: "superuser"
+      password: "superuser"
+      dbname: "LearnWords"
+      schema: "public"
+      threads: 5 # 1 for each model running concurrently
+  target: dev

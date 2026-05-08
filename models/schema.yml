@@ -1,0 +1,191 @@
+version: 2
+
+models:
+  - name: CUSTOMERS
+    description: >
+      Customer dimension model built from the seeded customers dataset.
+      Contains one record per customer and stores company-level billing attributes.
+    columns:
+      - name: customer_id
+        description: Unique identifier for the customer.
+        tests:
+          - not_null
+          - unique
+
+      - name: company_name
+        description: Name of the customer company.
+
+      - name: country
+        description: Country where the customer company is located.
+
+      - name: default_billing_method
+        description: Default billing method assigned to the customer.
+        tests:
+          - accepted_values:
+              values:
+                - credit_card
+                - debit_card
+                - wire
+
+  - name: PRODUCTS
+    description: >
+      Product dimension model built from the seeded products dataset.
+      Contains one record per product and its billing frequency.
+    columns:
+      - name: product_id
+        description: Unique identifier for the product.
+        tests:
+          - not_null
+          - unique
+
+      - name: product_name
+        description: Name of the product.
+
+      - name: billing_frequency
+        description: Billing frequency of the product, such as monthly or yearly.
+        tests:
+          - accepted_values:
+              values:
+                - monthly
+                - quarterly
+                - annual
+
+  - name: INVOICES
+    description: >
+      Invoice fact-like model built from the seeded invoices dataset.
+      Contains one row per invoice with billing period and invoice amount details.
+    columns:
+      - name: invoice_id
+        description: Unique identifier for the invoice.
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Identifier of the customer associated with the invoice.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('CUSTOMERS')
+              field: customer_id
+
+      - name: subscription_id
+        description: Identifier of the subscription associated with the invoice.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('SUBSCRIPTIONS')
+              field: subscription_id
+
+      - name: product_id
+        description: Identifier of the billed product.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('PRODUCTS')
+              field: product_id
+
+      - name: invoice_date
+        description: Date when the invoice was issued.
+        tests:
+          - not_null
+
+      - name: billing_start_date
+        description: Start date of the billing period covered by the invoice.
+        tests:
+          - not_null
+
+      - name: billing_end_date
+        description: End date of the billing period covered by the invoice.
+        tests:
+          - not_null
+
+      - name: amount_usd
+        description: Total invoiced amount in US dollars for the billing period.
+        tests:
+          - not_null
+
+  - name: SCHOOLS
+    description: >
+      School dimension model built from the seeded schools dataset.
+      Contains one record per school and stores the school name together with
+      the relevant business use case.
+    columns:
+      - name: school_id
+        description: Unique identifier for the school.
+        tests:
+          - not_null
+          - unique
+
+      - name: school_name
+        description: Name of the school.
+
+      - name: use_case
+        description: Business or product use case associated with the school.
+        tests:
+          - accepted_values:
+              values:
+                - b2b_course_sellers
+                - b2c_course_sellers
+                - customer_training
+                - corporate_training
+                - government_ngos
+
+  - name: SUBSCRIPTIONS
+    description: >
+      Subscription dimension-like model built from the seeded subscriptions dataset.
+      Contains one record per subscription and stores subscription type, school,
+      billing method, lifecycle status, and subscription coverage dates.
+    columns:
+      - name: subscription_id
+        description: Unique identifier for the subscription.
+        tests:
+          - not_null
+          - unique
+
+      - name: subscription_type
+        description: Type or plan category of the subscription.
+
+      - name: school_id
+        description: Identifier of the school associated with the subscription.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('SCHOOLS')
+              field: school_id
+
+      - name: billing_method
+        description: Billing method used for the subscription.
+
+      - name: status
+        description: Current lifecycle status of the subscription.
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - active
+                - cancelled
+
+      - name: start_date
+        description: Date when the subscription started.
+
+      - name: billed_until_date
+        description: Date through which the subscription has been billed.
+
+  - name: MART_TBL
+    description: >
+      Reporting mart table that combines invoices, subscriptions, schools,
+      and customers to produce monthly recurring revenue by school use case,
+      customer country, and calendar month.
+    columns:
+      - name: School Use Case
+        description: Use case associated with the school linked to the subscription.
+
+      - name: Country Name
+        description: Country of the customer associated with the invoice.
+
+      - name: Calendar Month
+        description: Calendar month derived from the billed month and formatted as Mon-YYYY.
+
+      - name: Monthly Recurring Revenue
+        description: Monthly recurring revenue allocated evenly across the billed months for each invoice.

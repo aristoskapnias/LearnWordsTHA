@@ -1,0 +1,115 @@
+
+version: 2
+
+seeds:
+  - name: customers
+    description: >
+      Customer seed dataset.
+      Contains one record per customer and stores company-level billing attributes.
+    config:
+      alias: customers_stg
+    columns:
+      - name: customer_id
+        description: Unique identifier for the customer.
+
+      - name: company_name
+        description: Name of the customer company.
+
+      - name: country
+        description: Country where the customer company is located.
+
+      - name: default_billing_method
+        description: Default billing method assigned to the customer.
+
+  - name: invoices
+    description: >
+      Invoice seed dataset.
+      Contains one row per invoice with billing period and invoice amount details.
+    config:
+      alias: invoices_stg
+    columns:
+      - name: invoice_id
+        description: Unique identifier for the invoice.
+
+      - name: customer_id
+        description: Identifier of the customer associated with the invoice.
+
+      - name: subscription_id
+        description: Identifier of the subscription associated with the invoice.
+
+      - name: product_id
+        description: Identifier of the billed product.
+
+      - name: invoice_date
+        description: Date when the invoice was issued.
+
+      - name: billing_start_date
+        description: Start date of the billing period covered by the invoice.
+
+      - name: billing_end_date
+        description: End date of the billing period covered by the invoice.
+
+      - name: amount_usd
+        description: Total invoiced amount in US dollars for the billing period.
+
+  - name: products
+    description: >
+      Product seed dataset.
+      Contains one record per product and its billing frequency.
+    config:
+      alias: products_stg
+    columns:
+      - name: product_id
+        description: Unique identifier for the product.
+
+      - name: product_name
+        description: Name of the product.
+
+      - name: billing_frequency
+        description: Billing frequency of the product, such as monthly or yearly.
+
+  - name: schools
+    description: >
+      School seed dataset.
+      Contains one record per school and stores the school name together with
+      the relevant business use case.
+    config:
+      alias: schools_stg
+    columns:
+      - name: school_id
+        description: Unique identifier for the school.
+
+      - name: school_name
+        description: Name of the school.
+
+      - name: use_case
+        description: Business or product use case associated with the school.
+
+  - name: subscriptions
+    description: >
+      Subscription seed dataset.
+      Contains one record per subscription and stores subscription type, school,
+      billing method, lifecycle status, and subscription coverage dates.
+    config:
+      alias: subscriptions_stg
+    columns:
+      - name: subscription_id
+        description: Unique identifier for the subscription.
+
+      - name: subscription_type
+        description: Type or plan category of the subscription.
+
+      - name: school_id
+        description: Identifier of the school associated with the subscription.
+
+      - name: billing_method
+        description: Billing method used for the subscription.
+
+      - name: status
+        description: Current lifecycle status of the subscription.
+
+      - name: start_date
+        description: Date when the subscription started.
+
+      - name: billed_until_date
+        description: Date through which the subscription has been billed.
