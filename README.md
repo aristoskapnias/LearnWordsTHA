@@ -142,7 +142,7 @@ dbt docs generate
 Serve the docs locally with:
 
 ```bash
-dbt docs serve
+dbt docs serve --port 8086
 ```
 
 ![dbt docs serve output](images/dbt_docs_serve.png)
