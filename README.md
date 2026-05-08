@@ -15,6 +15,7 @@ Demo project to imitate a realistic, hands-on problem reflecting the kind of wor
 - The project was structured to support repeated runs with seeds containing new and updated records for entities such as invoices and subscriptions.
 - Slowly Changing Dimensions (SCD) are not included, as they are out of scope for this demo.
 - The final mart includes core analysis dimensions only; additional dimensions could be added depending on the reporting requirements.
+- Credit notes (negative amounts) in invoices are also distributed proportionally across the months covered by credit's billing period
 
 ## Project Structure
 
