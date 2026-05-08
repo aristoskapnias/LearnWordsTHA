@@ -1,47 +1,173 @@
-### LearnWords Take Home Assignment project
+# LearnWords Take Home Assignment Project
 
-## SCOPE
+## Scope
 
-Demo project to imitate a realistic, hands-on problem reflecting the kind of work of a LearnWords Analytics Engineer
+Demo project to imitate a realistic, hands-on problem reflecting the kind of work of a LearnWords Analytics Engineer.
 
-## ASSUMPTIONS
+## Assumptions
 
-- DBT project was created in local Windows WSL (Ubuntu 24.04.3 LTS) in newly created Python virtual environment just for this
-- Materialization of layers and final Mart table took place in pre-existing local Postgres running on port 5432.
-Database used called 'LearnWords'. Other RDBMS are easily supported by downloading respective adapter and setting the profile appropriately in profiles.yml
-- Docker container running Postgres or instructions to create 1 for test purposes not included as is out of scope of this demo
-- Time limitations applied
-- Project was structured in a way to support regular runs with seeds including new and updated records for entities (invoices, subscriptions etc.) included. It does not support SCD though, as this would be out of scope of this demo
-- For Mart table least analysis dimensions were included, though many more could be added depending on the requirements
+- The dbt project was created locally in Windows WSL (`Ubuntu 24.04.3 LTS`) in a newly created Python virtual environment dedicated to this assignment.
+- Materialization of the staging layers and final mart table took place in a pre-existing local PostgreSQL instance running on port `5432`.
+- The database used is called `LearnWords`.
+- Other RDBMS engines can be supported by installing the respective dbt adapter and updating the connection profile in `profiles.yml`.
+- Creating a Dockerized PostgreSQL instance is out of scope for this demo.
+- Time limitations applied.
+- The project was structured to support repeated runs with seeds containing new and updated records for entities such as invoices and subscriptions.
+- Slowly Changing Dimensions (SCD) are not included, as they are out of scope for this demo.
+- The final mart includes core analysis dimensions only; additional dimensions could be added depending on the reporting requirements.
 
-## STEPS
+## Project Structure
 
-- Download project from Git repo in home folder (mine is /home/aristos/)
+```text
+LearnWordsTHA/
+├── analyses/
+├── macros/
+├── models/
+│   ├── CUSTOMERS.sql
+│   ├── INVOICES.sql
+│   ├── MART_TBL.sql
+│   ├── PRODUCTS.sql
+│   ├── SCHOOLS.sql
+│   ├── SUBSCRIPTIONS.sql
+│   └── schema.yml
+├── seeds/
+│   ├── customers.csv
+│   ├── invoices.csv
+│   ├── products.csv
+│   ├── schools.csv
+│   ├── subscriptions.csv
+│   └── properties.yml
+├── snapshots/
+├── tests/
+├── images/
+│   ├── dbt_seed.png
+│   ├── dbt_test.png
+│   ├── dbt_run.png
+│   └── dbt_docs.png
+├── dbt_project.yml
+├── profiles.yml
+└── README.md
+```
+
+## Setup Steps
+
+### 1. Clone the project from GitHub
+
+From your home directory (mine was /home/aristos/)
+
+```bash
+cd /home/aristos/
 git clone git@github.com:aristoskapnias/LearnWordsTHA.git LearnWordsTHA
+```
 
-- Create .dbt folder to hold profiles.yml
-mkdir .dbt
+### 2. Create the dbt profile directory
 
-- Copy profiles.yml from project folder to .dbt folder
-cp LearnWordsTHA/profiles.yml .dbt/
+```bash
+mkdir -p ~/.dbt
+```
 
-- Create Python virtual environment with dependencies to run project
+### 3. Copy `profiles.yml` into the dbt profile directory
+
+```bash
+cp LearnWordsTHA/profiles.yml ~/.dbt/
+```
+
+### 4. Create and activate a Python virtual environment
+
+```bash
 python3 -m venv DBTenv
 source DBTenv/bin/activate
-pip install dbt-core==1.11.9 # versions found to be compatible
+```
+
+### 5. Install dbt dependencies
+
+```bash
+pip install dbt-core==1.11.9
 pip install dbt-postgres==1.10.0
+```
 
+### 6. Move into the project folder
+
+```bash
 cd LearnWordsTHA
+```
 
-- Run dbt seed to load .csv files as raw tables in db
+## Run the Project
+
+### 1. Seed the raw CSV data into PostgreSQL
+
+Run `dbt seed` to load the `.csv` files from the `seeds/` folder into PostgreSQL as raw/staging seed tables.
+
+```bash
 dbt seed
+```
 
-images/dbt_seed.png
+![dbt seed output](images/dbt_seed.png)
 
-- Run tests to check data quality. Records failing will be written to a separate schema in db set via 
- dbt_project.yml
+### 2. Run data quality tests
 
+Run `dbt test` to validate:
+
+- primary/business key uniqueness
+- non-null constraints
+- referential integrity
+- accepted values
+- custom SQL tests for business date logic
+
+```bash
 dbt test
+```
 
--- Run project to load data in final Mart table
+![dbt test output 1](images/dbt_test_1.png)
+![dbt test output 2](images/dbt_test_2.png)
+
+### 3. Build the models
+
+Run `dbt run` to materialize the staging entities and the final mart table.
+
+```bash
 dbt run
+```
+
+![dbt run output](images/dbt_run.png)
+
+## dbt Documentation
+
+Generate project documentation with:
+
+```bash
+dbt docs generate
+```
+
+Serve the docs locally with:
+
+```bash
+dbt docs serve
+```
+
+![dbt docs serve output](images/dbt_docs_serve.png)
+
+
+## Final Output
+
+The project produces a final reporting mart table:
+
+- `MART_TBL`
+
+This mart combines:
+
+- invoices
+- subscriptions
+- schools
+- customers
+
+to provide monthly recurring revenue by:
+
+- school use case
+- customer country
+- calendar month
+
+
+## Author
+
+Aristos Kapnias
